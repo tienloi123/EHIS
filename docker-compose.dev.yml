@@ -1,0 +1,58 @@
+version: "3.3"
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    env_file: .env.dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/data/postgres
+    networks:
+      - backend_network
+
+  opa:
+    image: openpolicyagent/opa:latest-debug
+    restart: always
+    ports:
+      - "8181:8181"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command:
+      - run
+      - --server
+      - --log-level=debug
+      - --set=services.api.url=http://host.docker.internal:8000
+      - --set=bundles.api.service=api
+      - --set=bundles.api.resource=/api/opa/rules
+      - --set=bundles.api.polling.min_delay_seconds=5
+      - --set=bundles.api.polling.max_delay_seconds=15
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend_network
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env.dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge
