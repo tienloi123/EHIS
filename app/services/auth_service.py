@@ -38,7 +38,8 @@ class AuthService:
 
         await user_crud.update(session=self.session,
                                obj_in=UserUpdate(access_token=access_token, refresh_token=refresh_token), db_obj=user)
-        return {"access_token": access_token, "refresh_token": refresh_token}
+
+        return {"access_token": access_token, "refresh_token": refresh_token,"full_name": user.name}
 
 
     async def logout(self, user):

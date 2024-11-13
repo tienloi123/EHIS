@@ -10,7 +10,7 @@ DELETE := "destroy"
 
 # Groups
 SUPERUSER := "Superuser"
-DOCTER := "Docter"
+DOCTOR := "Doctor"
 RECEPTIONIST := "Receptionist"
 PATIENT := "Patient"
 
@@ -21,7 +21,7 @@ is_superuser {
 }
 
 is_doctor {
-    input.auth.user.role == DOCTER
+    input.auth.user.role == DOCTOR
 }
 
 is_receptionist {

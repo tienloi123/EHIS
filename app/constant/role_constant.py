@@ -3,6 +3,6 @@ from enum import Enum
 
 class RoleEnum(str, Enum):
     SUPERUSER = "Superuser"
-    DOCTER = "Docter"
+    DOCTOR = "Doctor"
     RECEPTIONIST = "Receptionist"
     PATIENT = "Patient"

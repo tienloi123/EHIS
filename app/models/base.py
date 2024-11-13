@@ -17,3 +17,4 @@ class Base(DeclarativeBase):
                 elif isinstance(result[column.name], date):
                     result[column.name] = convert_to_DMY_str(result[column.name])
         return result
+

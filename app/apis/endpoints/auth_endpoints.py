@@ -37,7 +37,7 @@ async def logout_bearer(user: User = Depends(get_current_active_user),
     return make_response_object("Đăng xuất thành công")
 
 
-@router.post("")
+@router.post("/register")
 async def register(user_data: UserRequest,
                    session: AsyncSession = Depends(get_async_session)):
     user_service = UserService(session=session)

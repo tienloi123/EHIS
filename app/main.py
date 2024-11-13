@@ -33,7 +33,7 @@ main_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-main_app.add_middleware(URLValidationMiddleware)
+# main_app.add_middleware(URLValidationMiddleware)
 
 
 @main_app.on_event("startup")

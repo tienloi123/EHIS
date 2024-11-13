@@ -1,9 +1,10 @@
 import logging
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 
 from pydantic import BaseModel
 
+from app.constant import GenderEnum
 from app.constant.role_constant import RoleEnum
 
 logger = logging.getLogger(__name__)
@@ -21,8 +22,11 @@ class UserCreate(UserBase):
     email: str
     hashed_password: str
     name: str
-    dob: datetime
+    dob: date
     role: RoleEnum
+    department: Optional[str]
+    clinic_location: Optional[str]
+    gender: GenderEnum
 
 
 class UserRequest(BaseModel):
@@ -31,6 +35,9 @@ class UserRequest(BaseModel):
     dob: str
     password: str
     role: RoleEnum
+    department: Optional[str]
+    clinic_location: Optional[str]
+    gender: GenderEnum
 
 
 class UserUpdate(UserBase):

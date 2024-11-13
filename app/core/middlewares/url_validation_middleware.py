@@ -24,8 +24,8 @@ class URLValidationMiddleware(BaseHTTPMiddleware):
                 status_code=403,
                 content={
                     "detail": {
-                        "name": AppStatus.ERROR_400_INVALID_URL.name,
-                        "message": AppStatus.ERROR_400_INVALID_URL.message,
+                        "name": AppStatus.ERROR_400_INVALID_URL,
+                        "message": AppStatus.ERROR_400_INVALID_URL,
                     }
                 }
             )

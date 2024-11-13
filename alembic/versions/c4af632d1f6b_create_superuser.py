@@ -21,21 +21,22 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     email = "admin@gmail.com"
-    password = "Doantienloi123"
+    password = "123"
     hashed_password = hash_password(password)
     name = "Admin"
     dob = datetime(2002, 7, 2)
 
     op.execute(
         sa.text(
-            'INSERT INTO "user" (email, name, dob, hashed_password, role) VALUES '
-            '(:email, :name, :dob, :hashed_password, :role)'
+            'INSERT INTO "user" (email, name, dob, hashed_password, role, gender) VALUES '
+            '(:email, :name, :dob, :hashed_password, :role, :gender)'
         ).bindparams(
             email=email,
             name=name,
             dob=dob,
             hashed_password=hashed_password,
-            role='Superuser'
+            role='Superuser',
+            gender='Nam'
         )
     )
 

@@ -52,22 +52,35 @@ def send_notification(channel: Union[int, str], notification_data: dict):
 def send_notification_batch(channels: List[Union[int, str]], notification_data: dict):
     batch = []
     for channel in channels:
+        # Tạo tên kênh cho người dùng
+        user_channel = f'{channel}' if isinstance(channel, int) else channel
+
+        # Tạo thông tin dữ liệu thông báo từ notification_data
+        notification_content = {
+            'title': notification_data.get('title', 'Thông báo'),
+            'description': notification_data.get('description', ''),
+            'doctor': {
+                'name': notification_data.get('doctor_name', ''),
+                'clinic_location': notification_data.get('clinic_location', '')
+            },
+            'start_date':notification_data.get('start_date', ''),
+            'start_time':notification_data.get('start_time', ''),
+        }
+
+        # Thêm vào batch để gửi thông báo
         batch.append({
-            'channel': f'user-{channel}' if isinstance(channel, int) else channel,
-            'name': notification_data["type"],
-            'data': {
-                'title': notification_data['title'],
-                'content': notification_data['description'],
-                'sender': {
-                    'id': notification_data['sender_id'],
-                    'name': notification_data['sender_name'],
-                    'role': notification_data['sender_role']
-                }
-            }
+            'channel': user_channel,
+            'name': "notification",
+            'data': notification_content
         })
 
     try:
+        # Gửi thông báo theo dạng batch qua `pusher_client`
         pusher_client.trigger_batch(batch, False)
-        logger.info(f"Thông báo được gửi cho người dùng với kênh: {[item['channel'] for item in batch]}")
+        logger.info(f"Thông báo đã được gửi cho người dùng qua các kênh: {[item['channel'] for item in batch]}")
     except Exception as e:
-        logger.error(f"Lỗi khi gửi thông báo cho người dùng với kênh: {[item['channel'] for item in batch]}, lỗi: {e}", exc_info=True)
+        # Log chi tiết nếu có lỗi
+        logger.error(
+            f"Lỗi khi gửi thông báo cho các kênh: {[item['channel'] for item in batch]}, lỗi: {str(e)}",
+            exc_info=True
+        )
