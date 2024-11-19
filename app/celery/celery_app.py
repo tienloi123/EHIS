@@ -60,6 +60,10 @@ def send_notification_batch(channels: List[Union[int, str]], notification_data: 
             '_id': notification_data.get('_id'),
             'title': notification_data.get('title', 'Thông báo'),
             'description': notification_data.get('description', ''),
+            'patient_name': notification_data.get('patient_name', ''),
+            'total_payment': notification_data.get('total_payment', ''),
+            'receptionist_name': notification_data.get('receptionist_name', ''),
+            'status_payment': notification_data.get('status_payment', ''),
             'doctor': {
                 'name': notification_data.get('doctor_name', ''),
                 'clinic_location': notification_data.get('clinic_location', '')

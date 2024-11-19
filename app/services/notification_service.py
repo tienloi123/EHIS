@@ -32,7 +32,11 @@ class NotificationService:
                 "doctor_name": 1,
                 "clinic_location": 1,
                 "start_date": 1,
-                "start_time": 1
+                "start_time": 1,
+                "receptionist_name": 1,
+                "patient_name": 1,
+                "status_payment": 1,
+                "total_payment": 1,
             }
         ).sort("created_at", -1)
 

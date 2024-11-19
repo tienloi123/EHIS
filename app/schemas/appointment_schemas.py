@@ -47,3 +47,16 @@ class UpdateAppointmentNotification(BaseModel):
     start_time: Optional[str]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+
+class CreatePaymentNotification(BaseModel):
+    _id: Optional[UUID]
+    to_notify_users: Optional[List[int]]
+    receptionist_name: Optional[str]
+    patient_name: Optional[str]
+    status_payment:Optional[str]
+    total_payment: Optional[str]
+    seen_users: Optional[List[int]]
+    title: Optional[str]
+    description: Optional[str]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]

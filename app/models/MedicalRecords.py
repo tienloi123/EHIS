@@ -15,7 +15,7 @@ class MedicalRecord(Base):
     # Quan hệ với bảng User
     patient = relationship('User', foreign_keys=[patient_id], back_populates='record_as_patient', lazy="selectin")
     doctor = relationship('User', foreign_keys=[doctor_id], back_populates='record_as_doctor', lazy="selectin")
-
+    payments = relationship("Payment", back_populates="medical_record", cascade="all, delete-orphan")
     def dict(self):
         result = self.to_dict()
         return result

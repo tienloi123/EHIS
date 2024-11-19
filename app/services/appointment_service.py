@@ -6,13 +6,15 @@ from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.celery import send_notification_batch
-from app.constant import StatusEnum, COLLECTION_NAME
+from app.constant import StatusEnum, COLLECTION_NAME, StatusPaymentEnum
 from app.constant.role_constant import RoleEnum
-from app.cruds import appointment_crud, user_crud
+from app.cruds import appointment_crud, user_crud, medical_record_crud, medical_record_doctor_crud, payment_crud, \
+    lab_test_crud
 from app.database import db
-from app.models import User, Appointment
+from app.models import User, Appointment, MedicalRecord, LabTest
+from app.models.medical_record_doctor import MedicalRecordDoctor
 from app.schemas import AppointmentCreate, AppointmentRequest, AppointmentUpdateRequest, AppointmentUpdate, \
-    UpdateAppointmentNotification
+    UpdateAppointmentNotification, PaymentCreate, CreatePaymentNotification
 from app.utils import convert_str_DMY_to_date_time, convert_datetime_to_date_str, \
     convert_datetime_to_time_str
 
@@ -174,10 +176,49 @@ class AppointmentService:
         await self.session.refresh(data)
         return data
 
-    async def end(self, id: int):
+    async def doctor_update(self, appointment_data: AppointmentUpdateRequest, id: int):
         appointment = await appointment_crud.get(self.session, Appointment.id == id)
-        await appointment_crud.update(self.session, obj_in=AppointmentUpdate(doctor_confirmed_status=True),
+        start_time = convert_str_DMY_to_date_time(appointment_data.start_time)
+        end_time = convert_str_DMY_to_date_time(appointment_data.end_time)
+        data = await appointment_crud.update(self.session,
+                                             obj_in=AppointmentUpdate(doctor_id=appointment_data.doctor_id,
+                                                                      start_time=start_time,
+                                                                      end_time=end_time),
                                              db_obj=appointment)
+        await self.session.refresh(data)
+        return data
+
+    async def end(self, id: int):
+        data_notification = {}
+        total_amount_medical = 0
+        payment_date = datetime.now()
+        appointment = await appointment_crud.get(self.session, Appointment.id == id)
+        data = await appointment_crud.update(self.session, obj_in=AppointmentUpdate(doctor_confirmed_status=True),
+                                             db_obj=appointment)
+        medical_record = await medical_record_crud.get(self.session, MedicalRecord.id == data.medical_record)
+        medical_record_doctors = await medical_record_doctor_crud.get_all(self.session,
+                                                                          MedicalRecordDoctor.medical_record_id == medical_record.id)
+
+        for medical_record_doctor in medical_record_doctors:
+            total_amount_medical += medical_record_doctor.payment_amount
+        payment = await payment_crud.create(self.session,
+                                            obj_in=PaymentCreate(medical_record_id=medical_record.id,
+                                                                 amount=total_amount_medical,
+                                                                 status=StatusPaymentEnum.PENDING,
+                                                                 payment_date=payment_date))
+        receptionist = await user_crud.get(self.session, User.role == RoleEnum.RECEPTIONIST)
+
+        receptionist_id = receptionist.id
+        receptionist_name = receptionist.name
+        patient_name = data.patient.name
+        patient_id = data.patient.id
+        total_payment = payment.amount
+        status_payment = payment.status
+        print('endpoint', status_payment)
+        data_notification.update({"receptionist_name": receptionist_name, "patient_name": patient_name,
+                                  "total_payment": str(total_payment), "status_payment": status_payment,
+                                  "receptionist_id": receptionist_id, "patient_id": patient_id})
+        return data_notification
 
     async def update_notification(self, data: Appointment, user):
         doctor_id = data.doctor_id
@@ -199,6 +240,59 @@ class AppointmentService:
                                                           )
         notification_dict = notification_data.dict()
         user_ids = [patient_id, doctor_id]
+        collection = db[COLLECTION_NAME]
+        insert_result = collection.insert_one(notification_dict)
+        notification_id = str(insert_result.inserted_id)
+        notification_dict["_id"] = notification_id  # Thêm ID vào dữ liệu gửi đi
+        send_notification_batch.delay(channels=user_ids, notification_data=notification_dict)
+
+    async def doctor_update_notification(self, data: Appointment, user):
+        doctor_id = data.doctor_id
+        patient_id = data.patient_id
+        doctor_name = data.doctor.name
+        clinic_location = data.doctor.clinic_location
+        start_date = convert_datetime_to_date_str(data.start_time)
+        start_time = convert_datetime_to_time_str(data.start_time)
+        notification_data = UpdateAppointmentNotification(to_notify_users=[patient_id, doctor_id],
+                                                          seen_users=[],
+                                                          title="Thông báo lịch hẹn mới.",
+                                                          description=f"Bạn có 1 lịch hẹn mới. Lịch hẹn này được tạo tự động bởi bác sĩ.",
+                                                          doctor_name=doctor_name,
+                                                          clinic_location=clinic_location,
+                                                          start_date=start_date,
+                                                          start_time=start_time,
+                                                          created_at=datetime.now(),
+                                                          updated_at=datetime.now(),
+                                                          )
+        notification_dict = notification_data.dict()
+        user_ids = [patient_id, doctor_id]
+        collection = db[COLLECTION_NAME]
+        insert_result = collection.insert_one(notification_dict)
+        notification_id = str(insert_result.inserted_id)
+        notification_dict["_id"] = notification_id  # Thêm ID vào dữ liệu gửi đi
+        send_notification_batch.delay(channels=user_ids, notification_data=notification_dict)
+
+    async def doctor_create_payment_notification(self, data: dict):
+        receptionist_id = data.get('receptionist_id')
+        patient_id = data.get('patient_id')
+        receptionist_name = data.get('receptionist_name')
+        status_payment = data.get('status_payment')
+        patient_name = data.get('patient_name')
+        total_payment = data.get('total_payment')
+        print('service', status_payment)
+        notification_data = CreatePaymentNotification(to_notify_users=[patient_id, receptionist_id],
+                                                      seen_users=[],
+                                                      title="Thông báo thanh toán.",
+                                                      description=f"Bạn có 1 thông báo thanh toán mới.",
+                                                      receptionist_name=receptionist_name,
+                                                      patient_name=patient_name,
+                                                      created_at=datetime.now(),
+                                                      updated_at=datetime.now(),
+                                                      total_payment=total_payment,
+                                                      status_payment=status_payment,
+                                                      )
+        notification_dict = notification_data.dict()
+        user_ids = [patient_id, receptionist_id]
         collection = db[COLLECTION_NAME]
         insert_result = collection.insert_one(notification_dict)
         notification_id = str(insert_result.inserted_id)

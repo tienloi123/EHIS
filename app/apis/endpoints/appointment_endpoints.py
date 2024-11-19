@@ -51,10 +51,12 @@ async def get_doctor(department: str, session: AsyncSession = Depends(get_async_
     appointment_service = AppointmentService(session=session)
     appointment_data = await appointment_service.get_doctor(department=department)
     return make_response_object(data=appointment_data)
+
+
 @router.get("/doctors/me")
 async def me_get_doctor(department: str, session: AsyncSession = Depends(get_async_session),
-                     user: User = Depends(get_current_active_user),
-                     ):
+                        user: User = Depends(get_current_active_user),
+                        ):
     appointment_service = AppointmentService(session=session)
     appointment_data = await appointment_service.me_get_doctor(department=department, user=user)
     return make_response_object(data=appointment_data)
@@ -71,12 +73,24 @@ async def update(appointment_data: AppointmentUpdateRequest,
     return make_response_object(data=appointment_data.dict())
 
 
+@router.put("/doctor/{id}")
+async def doctor_update(appointment_data: AppointmentUpdateRequest,
+                        id: int, session: AsyncSession = Depends(get_async_session),
+                        user: User = Depends(get_current_active_user),
+                        ):
+    appointment_service = AppointmentService(session=session)
+    appointment_data = await appointment_service.doctor_update(appointment_data=appointment_data, id=id)
+    await appointment_service.doctor_update_notification(data=appointment_data, user=user)
+    return make_response_object(data=appointment_data.dict())
+
+
 @router.put("/end/{id}")
 async def end(id: int, session: AsyncSession = Depends(get_async_session),
               user: User = Depends(get_current_active_user),
               ):
     appointment_service = AppointmentService(session=session)
-    await appointment_service.end(id=id)
+    appointment_data = await appointment_service.end(id=id)
+    await appointment_service.doctor_create_payment_notification(data=appointment_data)
     return make_response_object(data='Success')
 
 
