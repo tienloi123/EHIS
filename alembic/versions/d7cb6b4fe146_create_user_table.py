@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('email', sa.String(length=255), unique=True, nullable=False),
         sa.Column('name', sa.String(length=45), nullable=False),
-        sa.Column('dob', sa.DateTime(timezone=True), nullable=False),
+        sa.Column('dob', sa.Date(), nullable=False),
         sa.Column('hashed_password', sa.String(), nullable=False),
         sa.Column('role', sa.Enum('Superuser', 'Doctor', 'Receptionist', 'Patient', name='role_enum'), nullable=False),
         sa.Column('gender', sa.Enum('Nam', 'Nữ', 'Khác', name='gender_enum'), nullable=False),
@@ -37,6 +37,8 @@ def upgrade() -> None:
                   onupdate=func.timezone('Asia/Ho_Chi_Minh', func.now())),
         sa.Column('access_token', sa.String(), nullable=True),
         sa.Column('refresh_token', sa.String(), nullable=True),
+        sa.Column('department', sa.String(), nullable=True),
+        sa.Column('clinic_location', sa.String(), nullable=True)
     )
 
 

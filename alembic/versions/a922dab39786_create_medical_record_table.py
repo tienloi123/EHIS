@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'a922dab39786'
-down_revision: Union[str, None] = '5e9dcc8c3644'
+down_revision: Union[str, None] = 'c4af632d1f6b'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -23,13 +23,9 @@ def upgrade():
     op.create_table(
         'medical_record',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('patient_id', sa.Integer, sa.ForeignKey('user.id', ondelete="CASCADE"), nullable=True),
         sa.Column('doctor_id', sa.Integer, sa.ForeignKey('user.id', ondelete="CASCADE"), nullable=True),
-        sa.Column('appointment_id', sa.Integer, sa.ForeignKey('appointment.id', ondelete="CASCADE"), nullable=True),
-        sa.Column('diagnosis', sa.String, nullable=True),
-        sa.Column('prescription', sa.String, nullable=True),
+        sa.Column('patient_id', sa.Integer, sa.ForeignKey('user.id', ondelete="CASCADE"), nullable=True),
         sa.Column('visit_date', sa.DateTime(timezone=True), server_default=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now())),
-        sa.Column('notes', sa.String, nullable=True),
     )
 
 def downgrade():

@@ -4,6 +4,7 @@ from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel
+from sqlalchemy import Boolean
 
 from app.constant import StatusEnum
 
@@ -21,10 +22,14 @@ class AppointmentRequest(AppointmentBase):
     start_time: str
 
 class AppointmentUpdate(BaseModel):
-    doctor_id: int
-    start_time: datetime
-    end_time: datetime
-    status: StatusEnum
+    doctor_id: Optional[int]
+    start_time: Optional[datetime]
+    end_time: Optional[datetime]
+    status: Optional[StatusEnum]
+    confirmed_by_doctor_id: Optional[int]
+    medical_record: Optional[int]
+    doctor_confirmed_status: Optional[bool]
+
 class AppointmentUpdateRequest(BaseModel):
     doctor_id: int
     start_time: str
@@ -32,13 +37,13 @@ class AppointmentUpdateRequest(BaseModel):
 
 class UpdateAppointmentNotification(BaseModel):
     _id: Optional[UUID]
-    to_notify_users: List[int]
-    doctor_name: str
-    clinic_location: str
-    seen_users: List[int]
-    title: str
-    description: str
-    start_date: str
-    start_time: str
-    created_at: datetime
-    updated_at: datetime
+    to_notify_users: Optional[List[int]]
+    doctor_name: Optional[str]
+    clinic_location: Optional[str]
+    seen_users: Optional[List[int]]
+    title: Optional[str]
+    description: Optional[str]
+    start_date: Optional[str]
+    start_time: Optional[str]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]

@@ -29,10 +29,6 @@ class User(Base):
                                            back_populates='patient', lazy="selectin")
     record_as_doctor = relationship('MedicalRecord', foreign_keys='MedicalRecord.doctor_id', back_populates='doctor',
                                           lazy="selectin")
-    lab_test_as_patient = relationship('LabTest', foreign_keys='LabTest.patient_id',
-                                     back_populates='patient', lazy="selectin")
-    lab_test_as_doctor = relationship('LabTest', foreign_keys='LabTest.doctor_id', back_populates='doctor',
-                                    lazy="selectin")
     def dict(self):
         result = self.to_dict(un_selects=['hashed_password','access_token','refresh_token'])
         return result

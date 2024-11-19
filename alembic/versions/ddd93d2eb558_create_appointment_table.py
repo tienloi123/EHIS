@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'ddd93d2eb558'
-down_revision: Union[str, None] = 'c4af632d1f6b'
+down_revision: Union[str, None] = 'fca6e93efce5'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -30,7 +30,9 @@ def upgrade():
         sa.Column('start_time', sa.DateTime(timezone=True), nullable=True),
         sa.Column('end_time', sa.DateTime(timezone=True), nullable=True),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now())),
-        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now()), onupdate=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now()))
+        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now()), onupdate=sa.func.timezone('Asia/Ho_Chi_Minh', sa.func.now())),
+        sa.Column('confirmed_by_doctor_id', sa.Integer(), nullable=True),
+        sa.Column('doctor_confirmed_status', sa.Boolean(), nullable=False, server_default='false'),
     )
 
 

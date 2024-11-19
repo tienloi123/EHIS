@@ -6,7 +6,7 @@ Create Date: 2024-09-26 19:13:05.302361
 
 """
 from typing import Sequence, Union
-from datetime import datetime
+from datetime import date
 import sqlalchemy as sa
 from alembic import op
 
@@ -24,7 +24,7 @@ def upgrade() -> None:
     password = "123"
     hashed_password = hash_password(password)
     name = "Admin"
-    dob = datetime(2002, 7, 2)
+    dob = date(2002, 7, 2)
 
     op.execute(
         sa.text(

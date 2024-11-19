@@ -57,6 +57,7 @@ def send_notification_batch(channels: List[Union[int, str]], notification_data: 
 
         # Tạo thông tin dữ liệu thông báo từ notification_data
         notification_content = {
+            '_id': notification_data.get('_id'),
             'title': notification_data.get('title', 'Thông báo'),
             'description': notification_data.get('description', ''),
             'doctor': {
