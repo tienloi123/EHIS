@@ -204,8 +204,7 @@ class AppointmentService:
         payment = await payment_crud.create(self.session,
                                             obj_in=PaymentCreate(medical_record_id=medical_record.id,
                                                                  amount=total_amount_medical,
-                                                                 status=StatusPaymentEnum.PENDING,
-                                                                 payment_date=payment_date))
+                                                                 status=StatusPaymentEnum.PENDING))
         receptionist = await user_crud.get(self.session, User.role == RoleEnum.RECEPTIONIST)
 
         receptionist_id = receptionist.id

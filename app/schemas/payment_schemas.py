@@ -12,7 +12,7 @@ class PaymentCreate(BaseModel):
     medical_record_id: int
     amount: float
     status: StatusPaymentEnum
-    payment_date = datetime
 
 class PaymentUpdate(BaseModel):
-    amount: float
+    status: StatusPaymentEnum
+    payment_date: datetime

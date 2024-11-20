@@ -11,7 +11,7 @@ class Payment(Base):
     medical_record_id = Column(Integer, ForeignKey('medical_record.id', ondelete="SET NULL"), nullable=True)
     amount = Column(Float, nullable=False)
     status = Column(Enum('PENDING', 'COMPLETED', 'FAILED', name='status_payment_enum'), nullable=False, default='PENDING')
-    payment_date = Column(DateTime(timezone=True), default=datetime.now)
+    payment_date = Column(DateTime(timezone=True),nullable=True)
 
     # Quan hệ với bảng MedicalRecord
-    medical_record = relationship("MedicalRecord", back_populates="payments")
+    medical_record = relationship("MedicalRecord", back_populates="payment", uselist=False)
