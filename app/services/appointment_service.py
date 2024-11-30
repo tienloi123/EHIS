@@ -31,13 +31,15 @@ class AppointmentService:
                                                     obj_in=AppointmentCreate(description=appointment_data.description,
                                                                              status=StatusEnum.UNPROCESSED,
                                                                              start_time=start_time, patient_id=user_id))
+        user = await user_crud.get(self.session, User.id==user_id)
+        user_name = user.name
         receptionist = await user_crud.get(self.session, User.role == RoleEnum.RECEPTIONIST)
         receptionist_id = receptionist.id
         receptionist_name = receptionist.name
         notification_data = UpdateAppointmentNotification(to_notify_users=[receptionist_id],
                                                           seen_users=[],
                                                           title="Thông báo mới từ bệnh nhân",
-                                                          description=f"Bạn có 1 lịch hẹn mới từ bệnh nhân: {receptionist_name}.",
+                                                          description=f"Bạn có 1 lịch hẹn mới từ bệnh nhân: {user_name}.",
                                                           created_at=datetime.now(),
                                                           updated_at=datetime.now(),
                                                           )
@@ -191,7 +193,6 @@ class AppointmentService:
     async def end(self, id: int):
         data_notification = {}
         total_amount_medical = 0
-        payment_date = datetime.now()
         appointment = await appointment_crud.get(self.session, Appointment.id == id)
         data = await appointment_crud.update(self.session, obj_in=AppointmentUpdate(doctor_confirmed_status=True),
                                              db_obj=appointment)
@@ -213,7 +214,6 @@ class AppointmentService:
         patient_id = data.patient.id
         total_payment = payment.amount
         status_payment = payment.status
-        print('endpoint', status_payment)
         data_notification.update({"receptionist_name": receptionist_name, "patient_name": patient_name,
                                   "total_payment": str(total_payment), "status_payment": status_payment,
                                   "receptionist_id": receptionist_id, "patient_id": patient_id})
@@ -278,7 +278,6 @@ class AppointmentService:
         status_payment = data.get('status_payment')
         patient_name = data.get('patient_name')
         total_payment = data.get('total_payment')
-        print('service', status_payment)
         notification_data = CreatePaymentNotification(to_notify_users=[patient_id, receptionist_id],
                                                       seen_users=[],
                                                       title="Thông báo thanh toán.",

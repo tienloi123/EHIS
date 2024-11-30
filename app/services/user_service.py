@@ -3,12 +3,11 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.constant import AppStatus
-from app.constant.role_constant import RoleEnum
 from app.core import error_exception_handler
 from app.cruds import user_crud
 from app.models import User
 from app.schemas import UserCreate, UserRequest
-from app.utils import hash_password, convert_str_DMY_to_date_time, convert_str_DMY_to_date
+from app.utils import hash_password, convert_str_DMY_to_date
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ class UserService:
         return user
 
     async def register(self, user_data: UserRequest):
-        user = await user_crud.get(self.session, User.email == user_data.email)
+        user = await user_crud.get(self.session, User.cccd_id == user_data.cccd_id)
         hashed_password = hash_password(user_data.password)
         if user:
             logger.error(AppStatus.ERROR_400_USER_ALREADY_EXISTS.message,
@@ -39,5 +38,7 @@ class UserService:
                                                                               gender=user_data.gender, dob=dob,
                                                                               name=user_data.name,
                                                                               department=user_data.department,
-                                                                              clinic_location=user_data.clinic_location))
+                                                                              clinic_location=user_data.clinic_location,
+                                                                              cccd_id=user_data.cccd_id,
+                                                                              residence=user_data.residence))
         return data.dict()

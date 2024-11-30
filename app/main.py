@@ -1,4 +1,5 @@
 import logging
+from os import mkdir
 from pathlib import Path
 
 import uvicorn
@@ -11,6 +12,8 @@ from app.core import settings, validation_exception_handler
 from app.core.middlewares import URLValidationMiddleware
 from app.opa.create_opa_bundle import create_opa_bundle
 from app.routers import main_router
+from fastapi.staticfiles import StaticFiles
+
 
 # Application definition
 main_app = FastAPI(title=settings.PROJECT_NAME,
@@ -51,5 +54,10 @@ logger = logging.getLogger(__name__)
 # Exception handlers
 main_app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
+uploads_path = Path("app/uploads")
+uploads_path.mkdir(parents=True, exist_ok=True)
+
+# Cấu hình FastAPI để phục vụ ảnh từ thư mục 'app/uploads'
+main_app.mount("/uploads", StaticFiles(directory=uploads_path), name="uploads")
 if __name__ == "__main__":
     uvicorn.run("main:main_app", host="0.0.0.0", reload=True)

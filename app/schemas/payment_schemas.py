@@ -13,6 +13,12 @@ class PaymentCreate(BaseModel):
     amount: float
     status: StatusPaymentEnum
 
+
 class PaymentUpdate(BaseModel):
     status: StatusPaymentEnum
     payment_date: datetime
+
+
+class PaymentRequest(BaseModel):
+    payment_id: int
+    amount: str

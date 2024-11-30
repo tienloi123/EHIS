@@ -6,3 +6,6 @@ from .medical_record_endpoints import router as medical_record_routes
 from .medical_record_doctor_endpoints import router as medical_record_doctor_routes
 from .lab_test_endpoints import router as lab_test_routes
 from .payment_endpoints import router as payment_routes
+from .QR_endpoints import router as qr_routes
+from .users_endpoints import router as user_routes
+

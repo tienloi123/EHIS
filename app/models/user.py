@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Boolean, DateTime, func, Integer, Enum, Date
+from sqlalchemy import Column, String, Boolean, DateTime, func, Integer, Enum, Date, BigInteger
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -16,6 +17,8 @@ class User(Base):
     role = Column(Enum('Superuser', 'Doctor', 'Receptionist', 'Patient',name='role_enum'), nullable=False)
     gender = Column(Enum('Nam', 'Nữ', 'Khác', name='gender_enum'), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+    cccd_id = Column(BigInteger, nullable=True)
+    residence = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Ho_Chi_Minh', func.now()))
     updated_at = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Ho_Chi_Minh', func.now()),
                         onupdate=func.timezone('Asia/Ho_Chi_Minh', func.now()))
@@ -29,6 +32,7 @@ class User(Base):
                                            back_populates='patient', lazy="selectin")
     record_as_doctor = relationship('MedicalRecord', foreign_keys='MedicalRecord.doctor_id', back_populates='doctor',
                                           lazy="selectin")
+    embedding = Column(JSON, nullable=True)
     def dict(self):
         result = self.to_dict(un_selects=['hashed_password','access_token','refresh_token'])
         return result

@@ -7,6 +7,7 @@ RETRIEVE := "retrieve"
 LIST := "list"
 UPDATE := "update"
 DELETE := "destroy"
+READ := "read"
 
 # Groups
 SUPERUSER := "Superuser"

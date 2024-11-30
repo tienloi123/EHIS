@@ -1,15 +1,17 @@
+from typing import Optional
+
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 
 
-class MedicalRecordDoctorCreate(BaseModel):
-    medical_record_id: int
-    diagnosis: str
-    prescription: str
-    payment_amount: float
+class MedicalRecordCreate(BaseModel):
+    patient_id: int
+    doctor_id: int
+    image: str
 
-class MedicalRecordDoctorRequest(BaseModel):
+class MedicalRecordRequest(BaseModel):
+    patient_id: int
+    doctor_id: int
     appointment_id: int
-    diagnosis: str
-    prescription: str
-    payment_amount: float
+    file: Optional[UploadFile]

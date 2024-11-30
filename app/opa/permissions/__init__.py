@@ -1,1 +1,2 @@
 from .appointment_permission import AppointmentPermission
+from .payment_permission import PaymentPermission

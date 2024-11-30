@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime, date
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel
+from sqlalchemy import JSON
 
 from app.constant import GenderEnum
 from app.constant.role_constant import RoleEnum
@@ -26,6 +27,8 @@ class UserCreate(UserBase):
     role: RoleEnum
     department: Optional[str]
     clinic_location: Optional[str]
+    cccd_id: int
+    residence: str
     gender: GenderEnum
 
 
@@ -37,6 +40,8 @@ class UserRequest(BaseModel):
     role: RoleEnum
     department: Optional[str]
     clinic_location: Optional[str]
+    cccd_id: int
+    residence: str
     gender: GenderEnum
 
 
@@ -47,6 +52,7 @@ class UserUpdate(UserBase):
     hashed_password: Optional[str] = None
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
+    embedding: Optional[Union[dict, list]] = None
 
 
 class UserFilter(BaseModel):

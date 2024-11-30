@@ -1,8 +1,11 @@
 import logging
+import shutil
 from datetime import datetime
-from app.celery import send_notification_batch
+from pathlib import Path
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.celery import send_notification_batch
 from app.constant import COLLECTION_NAME
 from app.cruds import medical_record_crud, appointment_crud
 from app.database import db
@@ -17,11 +20,18 @@ class MedicalService:
         self.session = session
 
     async def create_medical_record(self, medical_record_data: MedicalRecordRequest):
-        medical_record = await medical_record_crud.create(self.session, obj_in=MedicalRecordCreate(
-            patient_id=medical_record_data.patient_id, doctor_id=medical_record_data.doctor_id))
-        appointment = await appointment_crud.get(self.session, Appointment.id == medical_record_data.appointment_id)
-        appointment_data = await appointment_crud.update(self.session, obj_in=AppointmentUpdate(medical_record=medical_record.id), db_obj=appointment)
 
+        file_location = Path("app/uploads") / medical_record_data.file.filename
+        with file_location.open("wb") as buffer:
+            shutil.copyfileobj(medical_record_data.file.file, buffer)
+        file_url = f"uploads/{medical_record_data.file.filename}"
+        medical_record = await medical_record_crud.create(self.session, obj_in=MedicalRecordCreate(
+            patient_id=medical_record_data.patient_id, doctor_id=medical_record_data.doctor_id, image=file_url))
+
+        appointment = await appointment_crud.get(self.session, Appointment.id == medical_record_data.appointment_id)
+        appointment_data = await appointment_crud.update(self.session,
+                                                         obj_in=AppointmentUpdate(medical_record=medical_record.id),
+                                                         db_obj=appointment)
 
         doctor_name = appointment_data.doctor.name
         patient_id = appointment_data.patient_id

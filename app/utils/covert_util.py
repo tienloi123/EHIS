@@ -55,3 +55,31 @@ def convert_datetime_to_time_str(datetime_value: datetime) -> str:
     # Chuyển đổi sang múi giờ UTC+7
     utc_plus_7 = utc_datetime.astimezone(pytz.timezone('Asia/Bangkok'))
     return utc_plus_7.strftime("%H:%M:%S")
+
+
+def convert_to_vietnam_time(utc_datetime):
+    """
+    Chuyển đổi datetime từ UTC sang múi giờ Việt Nam (UTC+7)
+
+    :param utc_datetime: datetime hoặc chuỗi datetime (UTC)
+    :return: datetime trong múi giờ Việt Nam hoặc None nếu không hợp lệ
+    """
+    if not utc_datetime:
+        return None
+
+    try:
+        # Nếu utc_datetime là chuỗi, chuyển sang đối tượng datetime
+        if isinstance(utc_datetime, str):
+            utc_datetime = datetime.fromisoformat(utc_datetime.replace("Z", "+00:00"))
+
+        # Chuyển đổi datetime sang múi giờ UTC
+        utc = pytz.utc.localize(utc_datetime)
+
+        # Chuyển đổi từ UTC sang múi giờ Việt Nam (Asia/Ho_Chi_Minh)
+        vietnam_tz = pytz.timezone("Asia/Ho_Chi_Minh")
+        vietnam_time = utc.astimezone(vietnam_tz)
+
+        return vietnam_time
+    except Exception as e:
+        print(f"Lỗi khi chuyển đổi datetime: {e}")
+        return None

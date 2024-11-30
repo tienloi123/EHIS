@@ -8,7 +8,7 @@ from app.constant.auth_constants import ACCESS_TOKEN_EXPIRES_IN_SECONDS, REFRESH
 from app.core.exceptions import make_response_object
 from app.database import get_async_session
 from app.models import User
-from app.schemas import AuthLogin, UserRequest
+from app.schemas import AuthLogin, UserRequest, AuthLoginFace, Face
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 
@@ -27,6 +27,29 @@ async def login_bearer(auth_data: AuthLogin, response: Response, session: AsyncS
     response.set_cookie(key="refresh_token", value=refresh_token, max_age=REFRESH_TOKEN_EXPIRES_IN_SECONDS,
                         httponly=True)
     return make_response_object({**auth_response, "token_type": "cookie"})
+
+
+@router.post('/face-login')
+async def login_face(auth_face_data: AuthLoginFace, response: Response,
+                     session: AsyncSession = Depends(get_async_session)):
+    auth_service = AuthService(session=session)
+    auth_face_response = await auth_service.login_face(auth_face_data=auth_face_data)
+    access_token = auth_face_response.get("access_token")
+    refresh_token = auth_face_response.get("refresh_token")
+    response.set_cookie(key="access_token", value=access_token, max_age=ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+                        httponly=True)
+    response.set_cookie(key="refresh_token", value=refresh_token, max_age=REFRESH_TOKEN_EXPIRES_IN_SECONDS,
+                        httponly=True)
+    return make_response_object({**auth_face_response, "token_type": "cookie"})
+
+
+@router.post('/record-face')
+async def record(face_data: Face,
+                 user: User = Depends(get_current_active_user),
+                 session: AsyncSession = Depends(get_async_session)):
+    auth_service = AuthService(session=session)
+    auth_face_response = await auth_service.record(face_data=face_data,user=user)
+    return make_response_object(auth_face_response)
 
 
 @router.get('/bearer-jwt/logout')
