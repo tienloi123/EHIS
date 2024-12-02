@@ -1,9 +1,8 @@
 import logging
-from datetime import datetime, date
-from typing import Optional, Union
+from datetime import date
+from typing import Optional
 
 from pydantic import BaseModel
-from sqlalchemy import JSON
 
 from app.constant import GenderEnum
 from app.constant.role_constant import RoleEnum
@@ -52,7 +51,7 @@ class UserUpdate(UserBase):
     hashed_password: Optional[str] = None
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
-    embedding: Optional[Union[dict, list]] = None
+    otp: Optional[str] = None
 
 
 class UserFilter(BaseModel):
@@ -62,3 +61,19 @@ class UserFilter(BaseModel):
 
 class UserDelete(BaseModel):
     pass
+
+
+class OTP(BaseModel):
+    otp: str
+
+class RegisterOTP(BaseModel):
+    otp: str
+    user_id: int
+
+
+class RegisterOtp(BaseModel):
+    user_id: int
+
+class PasswordReset(BaseModel):
+    oldPassword: str
+    newPassword: str

@@ -26,11 +26,16 @@ class UserService:
 
     async def register(self, user_data: UserRequest):
         user = await user_crud.get(self.session, User.cccd_id == user_data.cccd_id)
+        email = await user_crud.get(self.session, User.email == user_data.email)
         hashed_password = hash_password(user_data.password)
         if user:
             logger.error(AppStatus.ERROR_400_USER_ALREADY_EXISTS.message,
                          exc_info=ValueError(AppStatus.ERROR_400_USER_ALREADY_EXISTS))
             raise error_exception_handler(app_status=AppStatus.ERROR_400_USER_ALREADY_EXISTS)
+        elif email:
+            logger.error(AppStatus.ERROR_400_EMAIL_ALREADY_EXISTS.message,
+                         exc_info=ValueError(AppStatus.ERROR_400_USER_ALREADY_EXISTS))
+            raise error_exception_handler(app_status=AppStatus.ERROR_400_EMAIL_ALREADY_EXISTS)
         dob = convert_str_DMY_to_date(date_str=user_data.dob)
         data = await user_crud.create(session=self.session, obj_in=UserCreate(email=user_data.email, is_active=True,
                                                                               hashed_password=hashed_password,

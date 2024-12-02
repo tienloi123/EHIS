@@ -32,7 +32,7 @@ class User(Base):
                                            back_populates='patient', lazy="selectin")
     record_as_doctor = relationship('MedicalRecord', foreign_keys='MedicalRecord.doctor_id', back_populates='doctor',
                                           lazy="selectin")
-    embedding = Column(JSON, nullable=True)
+    otp = Column(String, nullable=True)
     def dict(self):
         result = self.to_dict(un_selects=['hashed_password','access_token','refresh_token'])
         return result

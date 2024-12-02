@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 
@@ -16,10 +14,4 @@ class AuthLogin(AuthBase):
 
 
 class AuthCookieLogin(AuthBase):
-    pass
-
-class AuthLoginFace(BaseModel):
-    images: List[str]
-
-class Face(AuthLoginFace):
     pass

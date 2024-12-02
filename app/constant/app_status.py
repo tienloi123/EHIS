@@ -7,6 +7,8 @@ class AppStatus(Enum):
 
     ERROR_400_BAD_REQUEST = status.HTTP_400_BAD_REQUEST, 'BAD_REQUEST', 'Yêu cầu không hợp lệ.'
     ERROR_400_USER_ALREADY_EXISTS = status.HTTP_400_BAD_REQUEST, 'BAD_REQUEST', 'Người dùng đã tồn tại.'
+    ERROR_400_EMAIL_ALREADY_EXISTS = status.HTTP_400_BAD_REQUEST, 'BAD_REQUEST', 'Email đã tồn tại.'
+    ERROR_400_INVALID_OTP = status.HTTP_400_BAD_REQUEST, 'BAD_REQUEST', 'OTP không hợp lệ hoặc đã hết hạn...'
     ERROR_400_INVALID_USERNAME_PASSWORD = status.HTTP_400_BAD_REQUEST, 'INVALID_USERNAME_PASSWORD', ('Mật khẩu '
                                                                                                      'không hợp lệ.')
     ERROR_400_INVALID_URL = status.HTTP_400_BAD_REQUEST, 'INVALID_URL', 'Đường dẫn chứa các ký tự không được hỗ trợ.'
