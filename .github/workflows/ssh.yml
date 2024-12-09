@@ -1,0 +1,64 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTIONS_ACCESS_TOKEN }}
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_SERVER_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_NAME }}@${{ secrets.SERVER_IP }} << 'EOF'
+            # Start the SSH agent
+            eval `ssh-agent -s`
+            ssh-add ~/.ssh/${{ secrets.SSH_PRIVATE_KEY_FILE_NAME }}
+
+            # Check if the application folder exists
+            if [ ! -d "${{ secrets.SERVER_ROOT_PATH }}/${{ secrets.APP_NAME_FOLDER }}" ]; then
+              cd ${{ secrets.SERVER_ROOT_PATH }}
+              git clone ${{ secrets.REPO_SSH_URL }} ${{ secrets.APP_NAME_FOLDER }}
+            fi
+
+            # Navigate to the app directory
+            cd ${{ secrets.SERVER_ROOT_PATH }}/${{ secrets.APP_NAME_FOLDER }}
+            
+            # Create and populate the environment file
+            touch .env.${{ secrets.ENVIRONMENT }}
+            echo "${{ secrets.ENV_FILE }}" > .env.${{ secrets.ENVIRONMENT }}
+
+            # Clean the git repository and reset any changes
+            git clean -f
+            git reset --hard
+
+            # Checkout the TEST branch, or create it if it doesn't exist
+            if git show-ref --quiet refs/heads/TEST; then
+              git checkout TEST
+            else
+              git checkout -b TEST main
+            fi
+
+            # Remove the main branch and switch back to it
+            git branch -D main
+
+            # Fetch the latest changes and pull from the main branch
+            git fetch
+            git checkout main
+            git pull
+
+            # Start the Docker container using docker-compose
+            docker-compose -f docker-compose.${{ secrets.ENVIRONMENT }}.yml up --build -d
+          EOF

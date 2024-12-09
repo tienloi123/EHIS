@@ -30,6 +30,7 @@ class AppStatus(Enum):
                                                                    'để được hỗ trợ thêm. Chúng tôi xin lỗi vì bất kỳ '
                                                                    'sự bất tiện nào.')
     ERROR_404_USER_NOT_FOUND = status.HTTP_404_NOT_FOUND, 'NOT_FOUND', 'Email không hợp lệ.'
+    ERROR_403_USER_NOT_ACTIVE = status.HTTP_403_FORBIDDEN, 'FORBIDDEN', 'Tài khoản chưa được kích hoạt.'
     ERROR_404_MEETING_NOT_FOUND = status.HTTP_404_NOT_FOUND, 'NOT_FOUND', 'Không tìm thấy cuộc họp.'
     ERROR_404_ATTENDANCE_NOT_FOUND = status.HTTP_404_NOT_FOUND, 'NOT_FOUND', 'Không tìm thấy danh sách tham dự.'
     ERROR_404_NOTIFICATION_NOT_FOUND = status.HTTP_404_NOT_FOUND, 'NOT_FOUND', 'Không tìm thấy thông báo với ID: {description}'

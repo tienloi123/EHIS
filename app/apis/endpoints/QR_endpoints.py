@@ -41,12 +41,14 @@ async def scan_qrcode(file: UploadFile = File(...)):
                             content={"message": "Please upload a photo with QRcode"})
     return JSONResponse(status_code=200, content={"data": info})
 
+
 def resize_image(image: np.ndarray, new_width: int) -> np.ndarray:
     ratio = new_width / image.shape[1]
     new_height = int(image.shape[0] * ratio)
     new_size = (new_width, new_height)
     new_image = cv2.resize(image, new_size, interpolation=cv2.INTER_LINEAR)
     return new_image
+
 
 def split_qr_code_area(origin_img: np.ndarray, bbox: Any) -> np.ndarray:
     x, y, w, h = cv2.boundingRect(bbox)
@@ -55,6 +57,7 @@ def split_qr_code_area(origin_img: np.ndarray, bbox: Any) -> np.ndarray:
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(30, 30))
     image = clahe.apply(gray)
     return image
+
 
 def extract_qr_info(data: str):
     if not data:
@@ -80,5 +83,7 @@ def extract_qr_info(data: str):
             "residence": data_parts[4],
             "issuance": format_date_str(data_parts[5]),
         }
+
+
 def format_date_str(date_str: str):
     return f"{date_str[0:2]}/{date_str[2:4]}/{date_str[4:]}"

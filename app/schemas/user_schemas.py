@@ -29,6 +29,7 @@ class UserCreate(UserBase):
     cccd_id: int
     residence: str
     gender: GenderEnum
+    is_active: Optional[bool]
 
 
 class UserRequest(BaseModel):

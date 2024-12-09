@@ -26,6 +26,26 @@ class PaymentService:
                                                                          payment_date=payment_date),
                                       db_obj=payment)
             return 'Success'
+    async def get_round_report_payments(self):
+        payments_data = [0, 0, 0, 0]
+        payments = await payment_crud.get_all(self.session)
+        for payment in payments:
+            payments_data[0] += 1
+            if payment.status == StatusPaymentEnum.COMPLETED:
+                payments_data[1] += 1
+            elif payment.status == StatusPaymentEnum.PENDING:
+                payments_data[2] += 1
+            elif payment.status == StatusPaymentEnum.FAILED:
+                payments_data[3] += 1
+        return payments_data
+
+    async def get_report_payments(self):
+        payments = await payment_crud.get_all(self.session, and_(Payment.payment_date != None, Payment.status == StatusPaymentEnum.COMPLETED))
+        payments_by_month = [0] * 12
+        for payment in payments:
+            month = payment.payment_date.month - 1
+            payments_by_month[month] += payment.amount
+        return payments_by_month
 
     async def get_payments(self, status, offset: int, limit: int):
         data = []
@@ -44,22 +64,17 @@ class PaymentService:
             patient_residence = medical_record.patient.residence
             patient_gender = medical_record.patient.gender
             patient_image = medical_record.image
-
-            print('-----------', patient_residence)
             medical_record_doctors_data = []
-
             medical_record_doctors = await medical_record_doctor_crud.get_all(
                 self.session,
                 MedicalRecordDoctor.medical_record_id == medical_record_id
             )
-
             for medical_record_doctor in medical_record_doctors:
                 medical_record_doctor_data = {
                     "prescription": medical_record_doctor.prescription,
                     "diagnosis": medical_record_doctor.diagnosis,
                     "payment_amount": medical_record_doctor.payment_amount,
                 }
-
                 lab_test = await lab_test_crud.get(
                     self.session, LabTest.medical_record_doctor_id == medical_record_doctor.id
                 )
@@ -69,9 +84,7 @@ class PaymentService:
                         "lab_test_result": lab_test.result_test,
                         "test_date": lab_test.test_date,
                     })
-
                 medical_record_doctors_data.append(medical_record_doctor_data)
-
             data_detail = {
                 "id": payment.id,
                 "patient_dob": patient_dob,
@@ -87,7 +100,6 @@ class PaymentService:
                 "medical_record_doctors": medical_record_doctors_data,
             }
             data.append(data_detail)
-            print(data)
         return data
 
     async def user_get_payments(self, status, offset: int, limit: int, user: User):
@@ -139,12 +151,12 @@ class PaymentService:
 
                 data_detail = {
                     "id": payment.id,
-                    "patient_residence":patient_residence,
+                    "patient_residence": patient_residence,
                     "patient_dob": patient_dob,
                     "patient_gender": patient_gender,
                     "doctor_name": doctor_name,
                     "patient_name": patient_name,
-                    "patient_image":patient_image,
+                    "patient_image": patient_image,
                     "visit_date": payment.medical_record.visit_date,
                     "payment_amount": payment.amount,
                     "payment_status": payment.status,

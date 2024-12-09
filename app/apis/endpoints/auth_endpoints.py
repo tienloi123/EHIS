@@ -69,12 +69,12 @@ async def register_send_otp(register_otp_data: RegisterOtp,
 
 @router.post('/verify-otp')
 async def verify_otp(
-        otp_data: OTP,  # OTP provided by the user
+        otp_data: OTP,
         user: User = Depends(get_current_active_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     auth_service = AuthService(session)
-    response = await auth_service.verify_otp(user=user, otp_data=otp_data)  # Verify OTP, not send it
+    response = await auth_service.verify_otp(user=user, otp_data=otp_data)
     return {"message": "OTP đã được xác thực thành công", "verified": True, **response}
 
 

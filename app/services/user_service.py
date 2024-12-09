@@ -37,7 +37,7 @@ class UserService:
                          exc_info=ValueError(AppStatus.ERROR_400_USER_ALREADY_EXISTS))
             raise error_exception_handler(app_status=AppStatus.ERROR_400_EMAIL_ALREADY_EXISTS)
         dob = convert_str_DMY_to_date(date_str=user_data.dob)
-        data = await user_crud.create(session=self.session, obj_in=UserCreate(email=user_data.email, is_active=True,
+        data = await user_crud.create(session=self.session, obj_in=UserCreate(email=user_data.email, is_active=False,
                                                                               hashed_password=hashed_password,
                                                                               role=user_data.role,
                                                                               gender=user_data.gender, dob=dob,

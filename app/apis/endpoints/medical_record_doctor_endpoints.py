@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 @router.post('')
 async def create_medical_record_doctor(medical_record_doctor_data: MedicalRecordDoctorRequest,
-                 session: AsyncSession = Depends(get_async_session)):
+                                       session: AsyncSession = Depends(get_async_session)):
     medical_record_doctor_service = MedicalDoctorService(session=session)
-    medical_record_doctor_response = await medical_record_doctor_service.create_medical_doctor_record(medical_record_doctor_data=medical_record_doctor_data)
+    medical_record_doctor_response = await medical_record_doctor_service.create_medical_doctor_record(
+        medical_record_doctor_data=medical_record_doctor_data)
     return make_response_object(medical_record_doctor_response)

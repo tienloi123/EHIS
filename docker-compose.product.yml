@@ -1,0 +1,79 @@
+version: "3.3"
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    env_file: .env.product
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/data/postgres
+    networks:
+      - traefik_test_general
+
+  opa:
+    image: openpolicyagent/opa:latest-debug
+    restart: always
+    ports:
+      - "8181:8181"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command:
+      - run
+      - --server
+      - --log-level=debug
+      - --set=services.api.url=http://host.docker.internal:8000
+      - --set=bundles.api.service=api
+      - --set=bundles.api.resource=/api/opa/rules
+      - --set=bundles.api.polling.min_delay_seconds=5
+      - --set=bundles.api.polling.max_delay_seconds=15
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - traefik_test_general
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env.product
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - traefik_test_general
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+      - opa
+      - redis
+      - mongodb
+    env_file:
+      - .env.product
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.ehis.codelearnit.io.vn`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+    networks:
+      - traefik_test_general
+
+networks:
+  traefik_test_general:
+    external: true

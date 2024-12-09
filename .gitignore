@@ -9,8 +9,7 @@ postgres_data
 
 # credentials
 .env
-.env.test
-.env.dev
+.env.*
 
 # dependencies
 poetry.lock

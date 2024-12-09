@@ -1,19 +1,16 @@
 import logging
-from os import mkdir
 from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.constant import ProjectBuildTypes, SwaggerPaths, BasePath
 from app.core import settings, validation_exception_handler
-from app.core.middlewares import URLValidationMiddleware
 from app.opa.create_opa_bundle import create_opa_bundle
 from app.routers import main_router
-from fastapi.staticfiles import StaticFiles
-
 
 # Application definition
 main_app = FastAPI(title=settings.PROJECT_NAME,

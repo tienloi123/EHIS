@@ -25,13 +25,38 @@ class AppointmentService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
+    async def report_appointments(self):
+        appointments_data = [0, 0]
+        appointments = await appointment_crud.get_all(session=self.session)
+
+        for appointment in appointments:
+            if appointment.status == StatusEnum.UNPROCESSED:
+                appointments_data[0] += 1
+            else:
+                appointments_data[1] += 1
+
+        return appointments_data
+
+    async def round_report_appointments(self):
+        appointments_data = [0, 0, 0]
+        appointments = await appointment_crud.get_all(session=self.session)
+
+        for appointment in appointments:
+            appointments_data[0] += 1
+            if appointment.status == StatusEnum.UNPROCESSED:
+                appointments_data[1] += 1
+            else:
+                appointments_data[2] += 1
+
+        return appointments_data
+
     async def user_create_appointment(self, appointment_data: AppointmentRequest, user_id):
         start_time = convert_str_DMY_to_date_time(date_str=appointment_data.start_time)
         appointment = await appointment_crud.create(session=self.session,
                                                     obj_in=AppointmentCreate(description=appointment_data.description,
                                                                              status=StatusEnum.UNPROCESSED,
                                                                              start_time=start_time, patient_id=user_id))
-        user = await user_crud.get(self.session, User.id==user_id)
+        user = await user_crud.get(self.session, User.id == user_id)
         user_name = user.name
         receptionist = await user_crud.get(self.session, User.role == RoleEnum.RECEPTIONIST)
         receptionist_id = receptionist.id
@@ -72,6 +97,18 @@ class AppointmentService:
 
     async def receptionist_get_appointment(self):
         appointments = await appointment_crud.get_all(self.session, Appointment.status == StatusEnum.UNPROCESSED)
+        result = []
+
+        for appointment in appointments:
+            appointment_data = appointment.dict()
+            if appointment.doctor_id:
+                appointment_data['doctor_name'] = appointment.doctor.name
+                appointment_data['doctor_clinic'] = appointment.doctor.clinic_location
+            result.append(appointment_data)
+        return result
+
+    async def admin_get_appointment(self):
+        appointments = await appointment_crud.get_all(self.session)
         result = []
 
         for appointment in appointments:

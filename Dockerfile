@@ -18,7 +18,15 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install poetry && \
     poetry config virtualenvs.create false && \
     poetry lock && \
-    poetry install --no-dev
+    poetry install --no-dev && apt-get update && apt-get install -y \
+    libzbar0 \
+    libzbar-dev \
+    build-essential \
+    libglib2.0-dev \
+    zlib1g-dev \
+    python3-dev \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 # copy project
 COPY . $APPLICATION_SERVICE

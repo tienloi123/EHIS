@@ -10,10 +10,14 @@ allow {
     utils.is_receptionist
     input.scope == utils.READ
 }
-reasons contains "Tài nguyên được yêu cầu thuộc về lễ tân" if {
-    { utils.READ }[input.scope]
+allow {
+    utils.is_superuser
     input.scope == utils.READ
+}
+reasons contains "Tài nguyên được yêu cầu thuộc về quản lý bệnh viện và lễ tân" if {
+    { utils.READ }[input.scope]
     not utils.is_receptionist
+    not utils.is_superuser
 }
 
 result := {

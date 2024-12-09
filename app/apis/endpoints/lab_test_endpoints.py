@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @router.post('')
 async def create_lab_test(lab_test_data: LabTestRequest,
-                 session: AsyncSession = Depends(get_async_session)):
+                          session: AsyncSession = Depends(get_async_session)):
     lab_test_service = LabTestService(session=session)
     lab_test_response = await lab_test_service.create_lab_test(lab_test_data=lab_test_data)
     return make_response_object(lab_test_response)

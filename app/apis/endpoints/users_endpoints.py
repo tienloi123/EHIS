@@ -7,7 +7,6 @@ from app.apis.depends.authorization import get_current_active_user
 from app.core.exceptions import make_response_object
 from app.database import get_async_session
 from app.models import User
-from app.services.user_service import UserService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

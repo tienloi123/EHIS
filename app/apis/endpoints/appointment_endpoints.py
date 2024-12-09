@@ -43,6 +43,14 @@ async def receptionist_get_appointment(session: AsyncSession = Depends(get_async
     appointment_data = await appointment_service.receptionist_get_appointment()
     return make_response_object(data=appointment_data)
 
+@router.get("/for_admin")
+async def receptionist_get_appointment(session: AsyncSession = Depends(get_async_session),
+                                       user: User = Depends(get_current_active_user),
+                                       ):
+    appointment_service = AppointmentService(session=session)
+    appointment_data = await appointment_service.admin_get_appointment()
+    return make_response_object(data=appointment_data)
+
 
 @router.get("/doctors")
 async def get_doctor(department: str, session: AsyncSession = Depends(get_async_session),
@@ -100,4 +108,22 @@ async def doctor_get_appointment(session: AsyncSession = Depends(get_async_sessi
                                  ):
     appointment_service = AppointmentService(session=session)
     appointment_data = await appointment_service.doctor_get_appointment(user=user)
+    return make_response_object(data=appointment_data)
+
+
+@router.get("/report-appointments")
+async def report_appointments(session: AsyncSession = Depends(get_async_session),
+                              user: User = Depends(get_current_active_user),
+                              ):
+    appointment_service = AppointmentService(session=session)
+    appointment_data = await appointment_service.report_appointments()
+    return make_response_object(data=appointment_data)
+
+
+@router.get("/round-report-appointments")
+async def round_report_appointments(session: AsyncSession = Depends(get_async_session),
+                                    user: User = Depends(get_current_active_user),
+                                    ):
+    appointment_service = AppointmentService(session=session)
+    appointment_data = await appointment_service.round_report_appointments()
     return make_response_object(data=appointment_data)

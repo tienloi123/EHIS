@@ -19,7 +19,10 @@ class AuthService:
 
     async def login(self, auth_data: AuthLogin):
         user = await user_crud.get(self.session, User.email == auth_data.email)
-
+        if not user.is_active:
+            logger.error(AppStatus.ERROR_403_USER_NOT_ACTIVE.message,
+                         exc_info=ValueError(AppStatus.ERROR_403_USER_NOT_ACTIVE))
+            raise error_exception_handler(app_status=AppStatus.ERROR_403_USER_NOT_ACTIVE)
         if user is None:
             logger.error(AppStatus.ERROR_404_USER_NOT_FOUND.message,
                          exc_info=ValueError(AppStatus.ERROR_404_USER_NOT_FOUND))
@@ -93,5 +96,5 @@ class AuthService:
         stored_otp = user.otp
         if stored_otp != otp_data.otp:
             raise error_exception_handler(app_status=AppStatus.ERROR_400_INVALID_OTP)
-        await user_crud.update(self.session, obj_in=UserUpdate(otp=''), db_obj=user)
+        await user_crud.update(self.session, obj_in=UserUpdate(otp='', is_active=True), db_obj=user)
         return {"verified": True}

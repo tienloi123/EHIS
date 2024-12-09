@@ -8,4 +8,5 @@ from .lab_test_endpoints import router as lab_test_routes
 from .payment_endpoints import router as payment_routes
 from .QR_endpoints import router as qr_routes
 from .users_endpoints import router as user_routes
+from .patient_endpoints import router as patient_routes
 

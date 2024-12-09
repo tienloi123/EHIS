@@ -9,10 +9,10 @@ from datetime import datetime, timedelta
 import httpx
 import requests
 from fastapi import Depends, APIRouter, HTTPException, Request
-from app.celery import send_notification_batch
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.apis.depends.authorization import get_current_active_user, check_user_permissions
+from app.celery import send_notification_batch
 from app.constant import StatusPaymentEnum, COLLECTION_NAME
 from app.constant.role_constant import RoleEnum
 from app.core.exceptions import make_response_object
@@ -55,6 +55,7 @@ async def user_get_payments(status: str = None, offset: int = 0,
     payment_data = await payment_service.user_get_payments(offset=offset, limit=limit, status=status, user=user)
     return make_response_object(data=payment_data)
 
+
 @router.post("/zalopay/create-payment")
 async def create_zalopay_payment(payment: PaymentRequest):
     async with httpx.AsyncClient() as client:
@@ -90,6 +91,8 @@ async def create_zalopay_payment(payment: PaymentRequest):
         except Exception as e:
             logger.exception(f"Exception occurred: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/callback")
 async def callback_zalopay(request: Request, session: AsyncSession = Depends(get_async_session)):
     try:
@@ -120,7 +123,7 @@ async def callback_zalopay(request: Request, session: AsyncSession = Depends(get
         )
         payment_amount = payment.amount
         medical_record_id = payment.medical_record_id
-        medical_record = await medical_record_crud.get(session, MedicalRecord.id == medical_record_id )
+        medical_record = await medical_record_crud.get(session, MedicalRecord.id == medical_record_id)
         patient_name = medical_record.patient.name
 
         receptionist = await user_crud.get(session, User.role == RoleEnum.RECEPTIONIST)
@@ -146,4 +149,14 @@ async def callback_zalopay(request: Request, session: AsyncSession = Depends(get
         raise HTTPException(status_code=500, detail=f"Lỗi khi xử lý callback: {str(e)}")
 
 
+@router.get("/report-payments")
+async def get_report_payments(session: AsyncSession = Depends(get_async_session)):
+    payment_service = PaymentService(session=session)
+    payment_data = await payment_service.get_report_payments()
+    return make_response_object(data=payment_data)
 
+@router.get("/report-round-payments")
+async def get_round_report_payments(session: AsyncSession = Depends(get_async_session)):
+    payment_service = PaymentService(session=session)
+    payment_data = await payment_service.get_round_report_payments()
+    return make_response_object(data=payment_data)
