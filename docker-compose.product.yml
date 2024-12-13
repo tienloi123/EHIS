@@ -42,6 +42,20 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - traefik_test_general
+  celery_worker:
+    image: api-be
+    pull_policy: never
+    command: [ 'celery','-A', 'app.celery.celery_app', 'worker', '--loglevel=info', '--concurrency=1','-P','solo' ]
+    env_file:
+      - .env.product
+    restart: always
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+      - opa
+    networks:
+      - traefik_test_general
 
   mongodb:
     image: mongo
