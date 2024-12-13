@@ -70,6 +70,7 @@ services:
       - traefik_test_general
 
   api:
+    image: api-be
     build:
       context: .
       dockerfile: Dockerfile
