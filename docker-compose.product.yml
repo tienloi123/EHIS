@@ -25,11 +25,13 @@ services:
       - run
       - --server
       - --log-level=debug
-      - --set=services.api.url=http://host.docker.internal:8000
+      - --set=services.api.url=http://api:8000
       - --set=bundles.api.service=api
       - --set=bundles.api.resource=/api/opa/rules
       - --set=bundles.api.polling.min_delay_seconds=5
       - --set=bundles.api.polling.max_delay_seconds=15
+    networks:
+      - traefik_test_general
 
   redis:
     image: redis

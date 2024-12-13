@@ -28,13 +28,6 @@ class Settings(BaseSettings):
     PGDATA: str
     PGADMIN_DEFAULT_EMAIL: str
     PGADMIN_DEFAULT_PASSWORD: str
-    # S3
-    S3_BUCKET_NAME: str
-    S3_ACCESS_KEY_ID: str
-    S3_SECRET_ACCESS_KEY: str
-    S3_REGION: str
-    S3_UPLOAD_FOLDER: str
-    S3_UPLOAD_EXTERNAL_FOLDER: str
     # NOSQL
     MONGO_INITDB_ROOT_USERNAME: str
     MONGO_INITDB_ROOT_PASSWORD: str
