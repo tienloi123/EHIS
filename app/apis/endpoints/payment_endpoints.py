@@ -69,12 +69,12 @@ async def create_zalopay_payment(payment: PaymentRequest):
                 "app_trans_id": "{:%y%m%d}_{}".format(datetime.today(), transID),
                 "app_user": f"{payment.payment_id}",
                 "app_time": int(round(time.time() * 1000)),
-                "embed_data": json.dumps({'redirecturl': 'http://localhost:3000/thanh-toan-thanh-cong'}),
+                "embed_data": json.dumps({'redirecturl': 'https://ehis.codelearnit.io.vn/thanh-toan-thanh-cong'}),
                 "item": json.dumps([{}]),
                 "amount": int(payment.amount),
                 "description": "Thanh toán tiền viện phí",
                 "bank_code": "CC",
-                "callback_url": 'https://7ee2-14-245-240-124.ngrok-free.app/api/payments/callback/',
+                "callback_url": 'https://api.ehis.codelearnit.io.vn/api/payments/callback/',
             }
             mac_data = f"{order['app_id']}|{order['app_trans_id']}|{order['app_user']}|{order['amount']}|{order['app_time']}|{order['embed_data']}|{order['item']}"
             order["mac"] = hmac.new(key1.encode(), mac_data.encode(), hashlib.sha256).hexdigest()

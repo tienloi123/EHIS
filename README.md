@@ -26,5 +26,5 @@
 7/ Run celery beat to monitor tasks:<br/>
 `celery -A app.celery.celery_app worker --loglevel=info --concurrency=1 -P solo`
 
-8/ Open<br/>
-`localhost:8000/api/docs`<br/>
+8/ Open Minio <br/>
+`https://ehis.minio.console.codelearnit.io.vn`<br/>
