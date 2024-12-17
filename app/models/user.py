@@ -18,6 +18,7 @@ class User(Base):
     gender = Column(Enum('Nam', 'Nữ', 'Khác', name='gender_enum'), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     cccd_id = Column(BigInteger, nullable=True)
+    avatar_url = Column(String, nullable=True)
     residence = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Ho_Chi_Minh', func.now()))
     updated_at = Column(DateTime(timezone=True), server_default=func.timezone('Asia/Ho_Chi_Minh', func.now()),

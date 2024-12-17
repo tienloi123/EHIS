@@ -90,6 +90,34 @@ services:
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
     networks:
       - traefik_test_general
+  minio:
+    image: minio/minio
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    labels:
+      - "traefik.enable=true"
+      # Router cho MinIO API (cổng 9000)
+      - "traefik.http.routers.ehis_minio_api.rule=Host(`${OBJECT_STORAGE_API_SERVER}`)"
+      - "traefik.http.routers.ehis_minio_api.entrypoints=websecure"
+      - "traefik.http.routers.ehis_minio_api.service=ehis_minio_api"
+      - "traefik.http.services.ehis_minio_api.loadbalancer.server.port=9000"
+      - "traefik.http.routers.ehis_minio_api.tls.certresolver=lets-encrypt"
+      # Router cho MinIO API (cổng 9001)
+      - "traefik.http.routers.ehis_minio_console.rule=Host(`${OBJECT_STORAGE_CONSOLE_SERVER}`)"
+      - "traefik.http.routers.ehis_minio_console.entrypoints=websecure"
+      - "traefik.http.routers.ehis_minio_console.service=ehis_minio_console"
+      - "traefik.http.services.ehis_minio_console.loadbalancer.server.port=9001"
+      - "traefik.http.routers.ehis_minio_console.tls.certresolver=lets-encrypt"
+    env_file:
+      - .env.product
+    volumes:
+      - ./minio_data:/data
+      - ./minio_config:/root/.minio
+    command: server /data --console-address ":9001"
+    networks:
+      - traefik_test_general
 
 networks:
   traefik_test_general:

@@ -16,6 +16,8 @@
 `echo $ENV_FILE`
 
 5/ Run database migration scripts:<br/>
+`alembic revision -m "message"`
+
 `alembic upgrade head`
 
 6/ Run main application:<br/>

@@ -19,16 +19,18 @@ class AuthService:
 
     async def login(self, auth_data: AuthLogin):
         user = await user_crud.get(self.session, User.email == auth_data.email)
-        if not user.is_active:
-            logger.error(AppStatus.ERROR_403_USER_NOT_ACTIVE.message,
-                         exc_info=ValueError(AppStatus.ERROR_403_USER_NOT_ACTIVE))
-            raise error_exception_handler(app_status=AppStatus.ERROR_403_USER_NOT_ACTIVE)
+        print(auth_data.email)
         if user is None:
             logger.error(AppStatus.ERROR_404_USER_NOT_FOUND.message,
                          exc_info=ValueError(AppStatus.ERROR_404_USER_NOT_FOUND))
             raise error_exception_handler(app_status=AppStatus.ERROR_404_USER_NOT_FOUND)
+        if not user.is_active:
+            logger.error(AppStatus.ERROR_403_USER_NOT_ACTIVE.message,
+                         exc_info=ValueError(AppStatus.ERROR_403_USER_NOT_ACTIVE))
+            raise error_exception_handler(app_status=AppStatus.ERROR_403_USER_NOT_ACTIVE)
 
-        if not verify_password(password=auth_data.password, hashed_password=user.hashed_password):
+        if not verify_password(password=auth_data.password,
+                               hashed_password=user.hashed_password):
             logger.error(AppStatus.ERROR_400_INVALID_USERNAME_PASSWORD.message,
                          exc_info=ValueError(AppStatus.ERROR_400_INVALID_USERNAME_PASSWORD))
             raise error_exception_handler(app_status=AppStatus.ERROR_400_INVALID_USERNAME_PASSWORD)

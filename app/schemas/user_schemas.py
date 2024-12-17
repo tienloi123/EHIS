@@ -53,6 +53,8 @@ class UserUpdate(UserBase):
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
     otp: Optional[str] = None
+    avatar_url: Optional[str] = None
+
 
 
 class UserFilter(BaseModel):

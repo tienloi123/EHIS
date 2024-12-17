@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
 
+    OBJECT_STORAGE_ENDPOINT: str
+    OBJECT_STORAGE_BUCKET_NAME: str
+    OBJECT_STORAGE_ACCESS_KEY_ID: str
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: str
+    OBJECT_STORAGE_REGION: str
+    OBJECT_STORAGE_UPLOAD_ME_FOLDER: str
+    OBJECT_STORAGE_UPLOAD_MEDICAL_RECORD_FOLDER: str
+
 
 env_file = os.getenv('ENV_FILE', '.env.dev')
 settings = Settings(_env_file=env_file, _env_file_encoding='utf-8')

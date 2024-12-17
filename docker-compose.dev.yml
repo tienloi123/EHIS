@@ -52,6 +52,20 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - backend_network
+  minio:
+    image: minio/minio
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env.dev
+    volumes:
+      - ./minio_data:/data
+      - ./minio_config:/root/.minio
+    command: server /data --console-address ":9001"
+    networks:
+      - backend_network
 
 networks:
   backend_network:

@@ -16,3 +16,5 @@ poetry.lock
 
 # opa
 app/opa/bundle.tar.gz
+minio_config
+minio_data
