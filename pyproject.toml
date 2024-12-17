@@ -25,6 +25,7 @@ flower = "^2.0.1"
 easyocr = "^1.7.1"
 pillow = "^10.3.0"
 pyzbar = "^0.1.9"
+boto3 = "^1.35.82"
 
 [build-system]
 requires = ["poetry-core"]
