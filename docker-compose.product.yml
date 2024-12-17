@@ -99,13 +99,13 @@ services:
     labels:
       - "traefik.enable=true"
       # Router cho MinIO API (cổng 9000)
-      - "traefik.http.routers.ehis_minio_api.rule=Host(`${OBJECT_STORAGE_API_SERVER}`)"
+      - "traefik.http.routers.ehis_minio_api.rule=Host(`ehis.minio.api.codelearnit.io.vn`)"
       - "traefik.http.routers.ehis_minio_api.entrypoints=websecure"
       - "traefik.http.routers.ehis_minio_api.service=ehis_minio_api"
       - "traefik.http.services.ehis_minio_api.loadbalancer.server.port=9000"
       - "traefik.http.routers.ehis_minio_api.tls.certresolver=lets-encrypt"
       # Router cho MinIO API (cổng 9001)
-      - "traefik.http.routers.ehis_minio_console.rule=Host(`${OBJECT_STORAGE_CONSOLE_SERVER}`)"
+      - "traefik.http.routers.ehis_minio_console.rule=Host(`ehis.minio.console.codelearnit.io.vn`)"
       - "traefik.http.routers.ehis_minio_console.entrypoints=websecure"
       - "traefik.http.routers.ehis_minio_console.service=ehis_minio_console"
       - "traefik.http.services.ehis_minio_console.loadbalancer.server.port=9001"
