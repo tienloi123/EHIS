@@ -9,4 +9,6 @@ from .payment_endpoints import router as payment_routes
 from .QR_endpoints import router as qr_routes
 from .users_endpoints import router as user_routes
 from .patient_endpoints import router as patient_routes
+from .doctor_endpoints import router as doctor_routes
+from .receptionist_endpoints import router as receptionist_routes
 

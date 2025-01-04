@@ -73,7 +73,7 @@ async def create_zalopay_payment(payment: PaymentRequest):
                 "item": json.dumps([{}]),
                 "amount": int(payment.amount),
                 "description": "Thanh toán tiền viện phí",
-                "bank_code": "CC",
+                "bank_code": "zalopayapp",
                 "callback_url": 'https://api.ehis.codelearnit.io.vn/api/payments/callback/',
             }
             mac_data = f"{order['app_id']}|{order['app_trans_id']}|{order['app_user']}|{order['amount']}|{order['app_time']}|{order['embed_data']}|{order['item']}"

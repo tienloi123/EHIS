@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.apis.endpoints import (auth_routes, opa_routes, appointment_routes,
                                 notification_routes, medical_record_routes, lab_test_routes,
-                                medical_record_doctor_routes, payment_routes, qr_routes,user_routes, patient_routes)
+                                medical_record_doctor_routes, payment_routes, qr_routes,user_routes, patient_routes, doctor_routes, receptionist_routes)
 
 main_router = APIRouter()
 main_router.include_router(opa_routes, prefix="/opa", tags=["opa"])
@@ -17,3 +17,5 @@ main_router.include_router(payment_routes, prefix="/payments", tags=["payments"]
 main_router.include_router(qr_routes, prefix="/qrcode", tags=["qrcode"])
 main_router.include_router(user_routes, prefix="/user", tags=["user"])
 main_router.include_router(patient_routes, prefix="/patient", tags=["patient"])
+main_router.include_router(doctor_routes, prefix="/doctor", tags=["doctor"])
+main_router.include_router(receptionist_routes, prefix="/receptionist", tags=["receptionist"])

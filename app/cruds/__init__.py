@@ -5,3 +5,5 @@ from  .medical_record_crud import medical_record_crud
 from  .medical_record_doctor_crud import medical_record_doctor_crud
 from .lab_test_crud import lab_test_crud
 from .payment_crud import payment_crud
+from .doctor_crud import doctors_crud
+from .receptionist_crud import receptionist_crud
